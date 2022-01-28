@@ -24,3 +24,8 @@ export default function Button({
     </button>
   );
 }
+export interface IButton {
+  children: string;
+  backColor: "primary" | "gradient" | "black";
+}
+
