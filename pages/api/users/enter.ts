@@ -15,10 +15,11 @@ const post: NextApiHandler = async (req, res) => {
                 }),
             );
         }
-        const payload = email ? { email } : { phone: +phone };
+        const userPayload = email ? { email } : { phone: +phone };
+        const tokenPayload = Math.floor(1000000 + Math.random() * 99999) + '';
         const existUser = await prismaClient.user.findFirst({
             where: {
-                ...payload,
+                ...userPayload,
             },
         });
         if (existUser) {
@@ -26,21 +27,27 @@ const post: NextApiHandler = async (req, res) => {
                 ResponseException.factory(400, {
                     path: req.url,
                     description: `User already exists. ${JSON.stringify(
-                        payload,
+                        userPayload,
                     )}`,
                 }),
             );
         }
 
-        const createdUser = await prismaClient.user.upsert({
-            where: {
-                ...payload,
+        const token = await prismaClient.token.create({
+            data: {
+                user: {
+                    connectOrCreate: {
+                        where: {
+                            ...userPayload,
+                        },
+                        create: {
+                            ...userPayload,
+                            name: 'Anonymous',
+                        },
+                    },
+                },
+                payload: tokenPayload,
             },
-            create: {
-                ...payload,
-                name: 'Anonymous',
-            },
-            update: {},
         });
 
         return res
@@ -49,7 +56,6 @@ const post: NextApiHandler = async (req, res) => {
                 CarrotResponse.builder(201)
                     .setPath(req.url)
                     .setDescription('User is successfully made')
-                    .setData({ createdUser })
                     .setMessage('OK')
                     .build(),
             );
