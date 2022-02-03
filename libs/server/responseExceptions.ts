@@ -11,12 +11,12 @@ export default class ResponseException {
 
     static factory(
         code: number,
-        options?: ResponseExceptionFactoryOptions,
+        detail?: ResponseExceptionFactoryOptions,
     ): ResponseException {
         const exception =
             responseExceptionsDict[code] ??
             new ResponseException('Unknown exception', code);
-        return { ...exception, ...(options && { options }) };
+        return { ...exception, ...(detail && { detail }) };
     }
 }
 
@@ -43,5 +43,8 @@ const NotAllowedMethodException = new ResponseException(
 
 const responseExceptionsDict: ResponseExceptionDict = {
     400: BadRequestException,
+    401: UnauthorizedException,
+    403: ForbiddenException,
+    404: NotFoundException,
     405: NotAllowedMethodException,
 };

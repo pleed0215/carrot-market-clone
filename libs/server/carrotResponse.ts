@@ -1,23 +1,24 @@
-export default class CarrotResponse {
+// TODO: CarrotResponse와 ResponseException 코드 합쳐야 함. 중복 코드임
+export default class CarrotResponse<T = any> {
     code: number;
     message?: string | null;
     description?: string | null;
     path?: string | null;
-    data?: any;
+    data?: T | undefined | null;
 
     constructor(code: number) {
         this.code = code;
     }
-    static builder(code: number) {
-        return new CarrotResponseBuilder(code);
+    static builder<T = any>(code: number) {
+        return new CarrotResponseBuilder<T>(code);
     }
 }
 
-class CarrotResponseBuilder {
-    private response: CarrotResponse;
+class CarrotResponseBuilder<T = any> {
+    private readonly response: CarrotResponse<T>;
 
     constructor(code: number) {
-        this.response = new CarrotResponse(code);
+        this.response = new CarrotResponse<T>(code);
     }
 
     setCode(value: number) {

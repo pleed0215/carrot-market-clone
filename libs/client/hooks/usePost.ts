@@ -8,17 +8,22 @@ type UsePostResult<T, R> = [
 type UsePostMutateFunc<T> = (data: T) => void;
 type UsePostState<R> = {
     loading: boolean;
-    data?: R | any | undefined | null;
+    data?: R | undefined | null;
     error?: string | undefined | null;
+};
+type UsePostOptions<R> = {
+    onFinish?: (data: R) => void;
 };
 
 export default function usePost<T = any, R = any>(
     url: string,
+    options?: UsePostOptions<R>,
 ): UsePostResult<T, R> {
     const [data, setData] = useState<R | null>();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>();
-    const mutateFunc = (data: T) => {
+
+    const mutateFunc = (inputData: T) => {
         setLoading(true);
         setData(undefined);
         setError(undefined);
@@ -27,7 +32,7 @@ export default function usePost<T = any, R = any>(
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(inputData),
         })
             .then(async (res) => {
                 // json parsing 실패할 경우 그냥 text로 넘겨주기.
@@ -41,7 +46,12 @@ export default function usePost<T = any, R = any>(
             })
             .then(setData)
             .catch((error) => setError(error.message))
-            .finally(() => setLoading(false));
+            .finally(() => {
+                setLoading(false);
+                if (options && data && options.onFinish) {
+                    options.onFinish(data);
+                }
+            });
     };
 
     return [mutateFunc, { data, loading, error }];
