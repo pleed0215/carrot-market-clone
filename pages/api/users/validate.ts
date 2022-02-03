@@ -1,13 +1,13 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import withHandler from '@libs/server/withHandler';
-import ResponseException from '@libs/server/responseExceptions';
 import prismaClient from '@libs/server/prisma';
 import CarrotResponse from '@libs/server/carrotResponse';
+import withSession from '@libs/server/withSession';
 
-const post: NextApiHandler = async (req, res) => {
+const post: NextApiHandler = withSession(async (req, res) => {
     if (!req.body.hasOwnProperty('token')) {
         return res.status(400).send(
-            ResponseException.factory(400, {
+            CarrotResponse.factory(400, {
                 path: req.url,
                 description: 'Token not given',
             }),
@@ -21,6 +21,10 @@ const post: NextApiHandler = async (req, res) => {
         },
     });
     if (tokenInfo) {
+        req.session.user = {
+            id: tokenInfo.userId,
+        };
+        await req.session.save();
         return res.status(201).send(
             CarrotResponse.builder(201)
                 .setMessage('Success on validation')
@@ -38,6 +42,6 @@ const post: NextApiHandler = async (req, res) => {
                 }),
         );
     }
-};
+});
 
 export default withHandler({ post });

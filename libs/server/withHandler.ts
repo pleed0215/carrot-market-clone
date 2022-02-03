@@ -1,5 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import ResponseException from '@libs/server/responseExceptions';
+import CarrotResponse from '@libs/server/carrotResponse';
 
 type WithHandlerProp = {
     get?: NextApiHandler;
@@ -16,7 +16,7 @@ const runHandler = async (
     if (handlerFn) {
         await handlerFn(req, res);
     } else {
-        res.status(405).send(ResponseException.factory(405));
+        res.status(405).send(CarrotResponse.factory(405));
     }
 };
 
@@ -43,7 +43,7 @@ export default function withHandler({
                     break;
                 default:
                     res.status(405).send(
-                        ResponseException.factory(405, {
+                        CarrotResponse.factory(405, {
                             path: req.url,
                             description: 'Wrong method provided',
                         }),

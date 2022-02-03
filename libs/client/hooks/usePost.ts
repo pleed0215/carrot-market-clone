@@ -35,7 +35,6 @@ export default function usePost<T = any, R = any>(
             body: JSON.stringify(inputData),
         })
             .then(async (res) => {
-                // json parsing 실패할 경우 그냥 text로 넘겨주기.
                 try {
                     // body stream은 한 번만 읽을 수 있으므로, 복제해서 사용.
                     const cloned = res.clone();

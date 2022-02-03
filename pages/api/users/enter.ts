@@ -1,6 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import withHandler from '@libs/server/withHandler';
-import ResponseException from '@libs/server/responseExceptions';
 import prismaClient from '@libs/server/prisma';
 import CarrotResponse from '@libs/server/carrotResponse';
 import twilio from 'twilio';
@@ -14,7 +13,7 @@ const post: NextApiHandler = async (req, res) => {
     try {
         if ((email && phone) || !(email || phone)) {
             res.status(400).send(
-                ResponseException.factory(400, {
+                CarrotResponse.factory(400, {
                     path: req.url,
                     description: 'Wrong input',
                 }),
@@ -29,7 +28,7 @@ const post: NextApiHandler = async (req, res) => {
         });
         if (existUser) {
             return res.status(400).send(
-                ResponseException.factory(400, {
+                CarrotResponse.factory(400, {
                     path: req.url,
                     description: `User already exists. ${JSON.stringify(
                         userPayload,
@@ -86,7 +85,7 @@ const post: NextApiHandler = async (req, res) => {
                 .build(),
         );
     } catch (e) {
-        res.status(500).send(ResponseException.factory(500, { path: req.url }));
+        res.status(500).send(CarrotResponse.factory(500, { path: req.url }));
     }
 };
 
