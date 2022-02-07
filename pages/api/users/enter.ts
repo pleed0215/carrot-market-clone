@@ -85,7 +85,9 @@ const post: NextApiHandler = async (req, res) => {
                 .build(),
         );
     } catch (e) {
-        res.status(500).send(CarrotResponse.factory(500, { path: req.url }));
+        res.status(500).send(
+            CarrotResponse.factory(500, { path: req.url, message: String(e) }),
+        );
     }
 };
 

@@ -4,7 +4,7 @@ import prismaClient from '@libs/server/prisma';
 import CarrotResponse from '@libs/server/carrotResponse';
 import withSession from '@libs/server/withSession';
 
-const post: NextApiHandler = withSession(async (req, res) => {
+const post: NextApiHandler = async (req, res) => {
     if (!req.body.hasOwnProperty('token')) {
         return res.status(400).send(
             CarrotResponse.factory(400, {
@@ -42,6 +42,6 @@ const post: NextApiHandler = withSession(async (req, res) => {
                 }),
         );
     }
-});
+};
 
 export default withHandler({ post });
