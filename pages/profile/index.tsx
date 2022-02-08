@@ -4,8 +4,8 @@ import Layout from '@components/layout';
 import useUser from '@libs/client/hooks/useUser';
 
 const Profile: NextPage = () => {
-    const user = useUser();
-    console.log(user);
+    const { user, isLoading, error } = useUser();
+    console.log(user, isLoading, error);
     return (
         <Layout hasTabBar title="나의 캐럿">
             <div className="px-4">

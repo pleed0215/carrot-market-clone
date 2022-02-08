@@ -12,18 +12,18 @@ const get: NextApiHandler = async (req, res) => {
         });
         if (user) {
             return res.status(200).send(
-                CarrotResponse.builder(200).setData({
-                    user,
-                }),
+                CarrotResponse.builder(200)
+                    .setData({
+                        user,
+                    })
+                    .build(),
             );
         } else {
-            return res
-                .status(404)
-                .send(
-                    CarrotResponse.factory(404, {
-                        message: 'Cannot find user',
-                    }),
-                );
+            return res.status(404).send(
+                CarrotResponse.factory(404, {
+                    message: 'Cannot find user',
+                }),
+            );
         }
     } else {
         return res.status(403).send(CarrotResponse.factory(403));

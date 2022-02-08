@@ -2,21 +2,29 @@ import type { NextPage } from 'next';
 import FloatingButton from '@components/floating-button';
 import Item from '@components/item';
 import Layout from '@components/layout';
+import useSWR from 'swr';
+import type { Product } from '@prisma/client';
+
+type ProductWithFavoriteCount = Product & { _count: { favorites: number } };
 
 const Home: NextPage = () => {
+    const { data, isValidating } =
+        useSWR<ProductWithFavoriteCount[]>('/api/items');
     return (
         <Layout title="홈" hasTabBar>
             <div className="flex flex-col space-y-5 divide-y">
-                {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
-                    <Item
-                        id={i}
-                        key={i}
-                        title="iPhone 14"
-                        price={99}
-                        comments={1}
-                        hearts={1}
-                    />
-                ))}
+                {isValidating && <div>Loading...</div>}
+                {data &&
+                    data.map((item, i) => (
+                        <Item
+                            id={item.id}
+                            key={item.id}
+                            title={item.name}
+                            price={item.price}
+                            comments={1}
+                            hearts={item._count.favorites}
+                        />
+                    ))}
                 <FloatingButton href="/items/upload">
                     <svg
                         className="h-6 w-6"
